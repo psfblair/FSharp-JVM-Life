@@ -1,0 +1,17 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "FSharp-JVM-Life", "FSharp-JVM-Life.fsproj", "{ACDD5C45-7357-403A-9A30-9E2A2EF0F39F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ACDD5C45-7357-403A-9A30-9E2A2EF0F39F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACDD5C45-7357-403A-9A30-9E2A2EF0F39F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACDD5C45-7357-403A-9A30-9E2A2EF0F39F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACDD5C45-7357-403A-9A30-9E2A2EF0F39F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
