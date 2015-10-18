@@ -46,6 +46,7 @@ Thumbs.db
 .idea
 
 #FSharp-JVM-Life
+.gradle
 src/main/resources/FSharp_JVM_Life.css
 src/main/resources/FSharp_JVM_Life.head.html
 src/main/resources/FSharp_JVM_Life.head.js
