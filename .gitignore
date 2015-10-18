@@ -4,6 +4,7 @@
 #build
 [Oo]bj/
 [Bb]in/
+build/
 packages/
 out/
 Content/
@@ -43,3 +44,8 @@ Thumbs.db
 
 #IDEA
 .idea
+
+#FSharp-JVM-Life
+src/main/resources/FSharp_JVM_Life.css
+src/main/resources/FSharp_JVM_Life.head.html
+src/main/resources/FSharp_JVM_Life.head.js

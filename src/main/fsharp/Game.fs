@@ -1,6 +1,7 @@
 ﻿namespace FSharp_JVM_Life
 
 open WebSharper
+open WebSharper.JavaScript
 
 [<JavaScript>]
 module Game =
@@ -8,50 +9,70 @@ module Game =
 
 (* ***************** State management ***************** *)
 
-   let mutable currentState = Set.empty<Cell>
+   [<JavaScript>]
+   let currentState = ref Set.empty<Cell>
 
+   [<JavaScript>]
    let isAlive cell = 
-      Set.contains cell currentState
+      Set.contains cell !currentState
 
+   [<JavaScript>]
    let removeCell cell =
-      currentState <- Set.remove cell currentState
+      currentState := Set.remove cell !currentState
 
+   [<JavaScript>]
    let addCell cell =
-      currentState <- Set.add cell currentState
+      currentState := Set.add cell !currentState
 
+   [<JavaScript>]
    let toggleCell cell =
       if isAlive cell then
          removeCell cell
       else 
          addCell cell
 
-   let resetAllCells = Set.empty<Cell>
-   
-   let mutable stop = false
+   [<JavaScript>]
+   let newGeneration() =
+      currentState := nextGeneration !currentState
 
+   [<JavaScript>]
+   let resetAllCells() =
+      currentState := Set.empty<Cell>
+
+   [<JavaScript>]
+   let mutable reset = true
+
+   [<JavaScript>]
    let rec generationLoop drawFunction =
-      if stop then
+      if reset then
             async { return () }
       else
             async {
                do! Async.Sleep 500
-               let newState = nextGeneration currentState
-               do  drawFunction newState
+               newGeneration()
+               do  drawFunction !currentState
                do! generationLoop drawFunction
             }
   
+   [<JavaScript>]
    let startDrawing drawFunction =
-      stop <- false
+      reset <- false
       Async.Start (generationLoop drawFunction)
 
+   [<JavaScript>]
    let stopDrawing () =
-      stop <- true
+      reset <- true
 
+   [<JavaScript>]
+   let redraw drawFunction = drawFunction !currentState
+
+   [<JavaScript>]
    let stopDrawingAndReset drawFunction =
       stopDrawing ()
-      currentState <- resetAllCells 
-      drawFunction currentState
+      resetAllCells()
+      redraw drawFunction
 
+   [<JavaScript>]
    let toggleCellAndRedraw (x,y) drawFunction =
-      let newState = toggleCell (x,y)
-      drawFunction currentState
+      toggleCell (x,y)
+      redraw drawFunction

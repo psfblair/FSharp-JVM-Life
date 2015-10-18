@@ -72,6 +72,8 @@ class LifeGUI(width: Int, height: Int, queue: BlockingQueue[Command]) {
     }
   })
 
+  def showWelcomeMessage() = canvas.showWelcomeMessage()
+
   def clearCanvas() = canvas.clearCanvas()
 
   def paintCell(x: Int, y: Int, side: Int) = canvas.paintCell(x, y, side)

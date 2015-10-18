@@ -13041,13 +13041,13 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
      },gameState))));
      return Seq.iter(Canvas.drawCell(),set);
     },
-    go:Runtime.Field(function()
+    go:function()
     {
      return Game.startDrawing(function(gameState)
      {
       return Canvas.drawLife(gameState);
      });
-    }),
+    },
     initialize:function(width,height,cellSidePixels,canvasXOffsetPixels,canvasYOffsetPixels,clearCanvasFn,drawCellFn)
     {
      Canvas.canvasWidth=function()
@@ -13078,7 +13078,7 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
      {
       return drawCellFn;
      };
-     return Canvas.drawLife(Game.currentState());
+     return Canvas.reset();
     },
     mouseDownCanvasCoordinates:Runtime.Field(function()
     {
@@ -13129,21 +13129,21 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
       $:0
      };
     }),
-    reset:Runtime.Field(function()
+    reset:function()
     {
      return Game.stopDrawingAndReset(function(gameState)
      {
       return Canvas.drawLife(gameState);
      });
-    }),
+    },
     scrollViewport:function(_,_1)
     {
-     var clientXYPair,previous,tupledArg,tupledArg1,_2;
+     var clientXYPair,previous,prevY,tupledArg,tupledArg1,_2;
      clientXYPair=[_,_1];
      if(Canvas.previousCanvasCoordinates().$==1)
       {
        previous=Canvas.previousCanvasCoordinates();
-       Canvas.previousCanvasCoordinates().$0[1];
+       prevY=Canvas.previousCanvasCoordinates().$0[1];
        Canvas.previousCanvasCoordinates().$0[0];
        tupledArg=Canvas.pixelsMovedDuring(clientXYPair[0],clientXYPair[1],previous);
        tupledArg1=Canvas.transformPixelPairToCellPair(tupledArg[0],tupledArg[1]);
@@ -13156,7 +13156,10 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
        {
         return _2;
        };
-       return Canvas.drawLife(Game.currentState());
+       return Game.redraw(function(gameState)
+       {
+        return Canvas.drawLife(gameState);
+       });
       }
      else
       {
@@ -13207,10 +13210,10 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
      };
      return;
     },
-    stop:Runtime.Field(function()
+    stop:function()
     {
      return Game.stopDrawing();
-    }),
+    },
     transformCellCoordinatesToCanvasCoordinates:function(_,_1)
     {
      var cell,multiplyByCellSide,addHalfACellSide,func,tupledArg,x1,x2,x3;
@@ -13332,29 +13335,26 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
    Game:{
     addCell:function(_,_1)
     {
-     var cell,_2;
+     var cell;
      cell=[_,_1];
-     _2=Game.currentState().Add(cell);
-     Game.currentState=function()
-     {
-      return _2;
-     };
+     (Game.currentState())[0]=(Game.currentState())[0].Add(cell);
      return;
     },
     currentState:Runtime.Field(function()
     {
-     return FSharpSet.New1(null);
+     return[FSharpSet.New1(null)];
     }),
     generationLoop:function(drawFunction)
     {
-     return Game.stop()?Concurrency.Delay(function()
+     return Game.reset()?Concurrency.Delay(function()
      {
       return Concurrency.Return(null);
      }):Concurrency.Delay(function()
      {
       return Concurrency.Bind(Concurrency.Sleep(500),function()
       {
-       drawFunction(Core.nextGeneration(Game.currentState()));
+       Game.newGeneration();
+       drawFunction((Game.currentState())[0]);
        return Concurrency.Bind(Game.generationLoop(drawFunction),function()
        {
         return Concurrency.Return(null);
@@ -13366,26 +13366,34 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
     {
      var cell;
      cell=[_,_1];
-     return Game.currentState().Contains(cell);
+     return(Game.currentState())[0].Contains(cell);
+    },
+    newGeneration:function()
+    {
+     (Game.currentState())[0]=Core.nextGeneration((Game.currentState())[0]);
+    },
+    redraw:function(drawFunction)
+    {
+     return drawFunction((Game.currentState())[0]);
     },
     removeCell:function(_,_1)
     {
-     var cell,_2;
+     var cell;
      cell=[_,_1];
-     _2=Game.currentState().Remove(cell);
-     Game.currentState=function()
-     {
-      return _2;
-     };
+     (Game.currentState())[0]=(Game.currentState())[0].Remove(cell);
      return;
     },
-    resetAllCells:Runtime.Field(function()
+    reset:Runtime.Field(function()
     {
-     return FSharpSet.New1(null);
+     return true;
     }),
+    resetAllCells:function()
+    {
+     (Game.currentState())[0]=FSharpSet.New1(null);
+    },
     startDrawing:function(drawFunction)
     {
-     Game.stop=function()
+     Game.reset=function()
      {
       return false;
      };
@@ -13393,13 +13401,9 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
       $:0
      });
     },
-    stop:Runtime.Field(function()
-    {
-     return false;
-    }),
     stopDrawing:function()
     {
-     Game.stop=function()
+     Game.reset=function()
      {
       return true;
      };
@@ -13407,14 +13411,9 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
     },
     stopDrawingAndReset:function(drawFunction)
     {
-     var _;
      Game.stopDrawing();
-     _=Game.resetAllCells();
-     Game.currentState=function()
-     {
-      return _;
-     };
-     return drawFunction(Game.currentState());
+     Game.resetAllCells();
+     return Game.redraw(drawFunction);
     },
     toggleCell:function(_,_1)
     {
@@ -13425,7 +13424,7 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
     toggleCellAndRedraw:function(x,y,drawFunction)
     {
      Game.toggleCell(x,y);
-     return drawFunction(Game.currentState());
+     return Game.redraw(drawFunction);
     }
    }
   }
@@ -13448,14 +13447,10 @@ var JSON;JSON||(JSON={}),function(){"use strict";function i(n){return n<10?"0"+n
  });
  Runtime.OnLoad(function()
  {
-  Game.stop();
-  Game.resetAllCells();
+  Game.reset();
   Game.currentState();
-  Canvas.stop();
-  Canvas.reset();
   Canvas.previousCanvasCoordinates();
   Canvas.mouseDownCanvasCoordinates();
-  Canvas.go();
   Canvas.drawCell();
   Canvas.clearCanvas();
   Canvas.cellYOffset();

@@ -1,6 +1,7 @@
 ﻿namespace FSharp_JVM_Life
 
 open WebSharper
+open WebSharper.JavaScript
 
 [<JavaScript>]
 module Canvas =
@@ -84,6 +85,12 @@ module Canvas =
 
   (****************** External Interface ***************************)
 
+  let go () = startDrawing drawLife
+
+  let stop () = stopDrawing ()
+
+  let reset () = stopDrawingAndReset drawLife
+
   let initialize width height cellSidePixels canvasXOffsetPixels canvasYOffsetPixels clearCanvasFn drawCellFn =         
      canvasWidth  <- width
      canvasHeight <- height
@@ -92,14 +99,7 @@ module Canvas =
      canvasYOffset <- canvasYOffsetPixels
      clearCanvas <- clearCanvasFn
      drawCell <- drawCellFn 
-
-     drawLife currentState
-
-  let go = startDrawing drawLife
-
-  let stop = stopDrawing ()
-
-  let reset = stopDrawingAndReset drawLife
+     reset ()
 
   let setMouseDown (clientXYPair: int * int) = 
      let canvasCoordinates = canvasCoordinatesFromMouseCoordinates clientXYPair
@@ -117,4 +117,4 @@ module Canvas =
         | Some(prevX,prevY) as previous ->
             pixelsMovedDuring clientXYPair previous |> transformPixelPairToCellPair |> updateCellOffsets
             previousCanvasCoordinates <- Some <| canvasCoordinatesFromMouseCoordinates clientXYPair              
-            drawLife currentState
+            redraw drawLife

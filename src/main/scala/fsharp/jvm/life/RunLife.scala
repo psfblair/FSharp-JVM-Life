@@ -8,6 +8,7 @@ import java.util.concurrent.{LinkedBlockingQueue, BlockingQueue}
 
 object RunLife {
   private val setTimeoutPolyfillPath = "/settimeout-nashorn.js"
+  private val consolePolyfillPath = "/console-nashorn.js"
   private val lifeJsPath = "/FSharp_JVM_Life.js"
   val width = 500
   val height = 500
@@ -46,6 +47,7 @@ object RunLife {
     engine = factory.getEngineByName("nashorn")
     invoker = engine.asInstanceOf[Invocable]
     engine.eval(new InputStreamReader(getClass.getResourceAsStream(setTimeoutPolyfillPath)))
+    engine.eval(new InputStreamReader(getClass.getResourceAsStream(consolePolyfillPath)))
     engine.eval(new InputStreamReader(getClass.getResourceAsStream(lifeJsPath)))
   }
 
@@ -58,6 +60,8 @@ object RunLife {
         | );
       """.stripMargin
     engine.eval(initializeJs)
+    lifeGui.showWelcomeMessage()
+    Thread.sleep(1500)
     lifeGui.clearCanvas()
   }
 

@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{ACDD5C45-7357-403A-9A30-9E2A2EF0F39F}</ProjectGuid>
     <WebSharperProject>Bundle</WebSharperProject>
-    <WebSharperBundleOutputDir>Content</WebSharperBundleOutputDir>
+    <WebSharperBundleOutputDir>src\main\resources</WebSharperBundleOutputDir>
     <OutputType>Library</OutputType>
     <RootNamespace>FSharp_JVM_Life</RootNamespace>
     <AssemblyName>FSharp_JVM_Life</AssemblyName>

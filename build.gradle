@@ -1,0 +1,48 @@
+apply plugin: 'scala'
+apply plugin: 'java'
+
+version = projectVersion       // See gradle.properties
+group = artifactGroup
+
+clean{
+    delete "src/main/resources/FSharp_JVM_Life.css"
+    delete "src/main/resources/FSharp_JVM_Life.head.html"
+    delete "src/main/resources/FSharp_JVM_Life.head.js"
+    delete "src/main/resources/FSharp_JVM_Life.min.js"
+}
+
+task uberjar(type: Jar) {
+    from files(sourceSets.main.output.classesDir)
+    from files(sourceSets.main.output.resourcesDir)
+    from {configurations.compile.collect {zipTree(it)}} {
+        exclude "META-INF/*.SF"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+}
+
+manifest {
+    attributes 'Main-Class': 'fsharp.jvm.life.RunLife'
+    }
+}
+
+dependencies {
+    compile "org.scala-lang:scala-library:$scalaVersion"
+}
+
+tasks.withType(ScalaCompile) {
+    scalaCompileOptions.fork = true
+    scalaCompileOptions.useAnt = false
+    scalaCompileOptions.deprecation = true
+    scalaCompileOptions.unchecked = true
+    scalaCompileOptions.optimize = true
+    scalaCompileOptions.additionalParameters = ["-feature", "-Yinline-warnings"]
+
+    configure(scalaCompileOptions.forkOptions) {
+      memoryMaximumSize = '1g'
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
